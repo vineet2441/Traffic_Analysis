@@ -19,9 +19,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Root directory path to serve media assets
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-app.mount("/media", StaticFiles(directory=ROOT_DIR), name="media")
+MEDIA_DIR = os.path.join(ROOT_DIR, "media")
+if not os.path.exists(MEDIA_DIR):
+    os.makedirs(MEDIA_DIR, exist_ok=True)
+
+app.mount("/media", StaticFiles(directory=MEDIA_DIR), name="media")
 
 app.include_router(router)
 

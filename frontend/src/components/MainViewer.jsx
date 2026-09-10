@@ -15,7 +15,7 @@ export default function MainViewer({ currentTimeSec, setCurrentTimeSec, currentF
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
 
-  const videoUrl = "/media/annotated_junction67.mp4";
+  const videoUrl = "/api/video/stream";
   const baseMapUrl = "/media/Map.jpeg";
   const heatmapUrl = "/media/HeatMap.jpeg";
 

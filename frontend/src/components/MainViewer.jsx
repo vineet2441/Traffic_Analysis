@@ -3,9 +3,9 @@ import { Play, Pause, Layers, MapPin, Flame, Eye, Volume2, VolumeX } from 'lucid
 
 const CLASS_COLORS = {
   "Two-Wheeler": "#007AFF",
-  "Three-Wheeler": "#FF9500",
-  "Car": "#34C759",
-  "LCV": "#FF3B30"
+  "Three-Wheeler": "#FF9F0A",
+  "Car": "#30D158",
+  "LCV": "#FF453A"
 };
 
 export default function MainViewer({ currentTimeSec, setCurrentTimeSec, currentFrameData, allTrajectories }) {
@@ -89,7 +89,7 @@ export default function MainViewer({ currentTimeSec, setCurrentTimeSec, currentF
         }
         ctx.strokeStyle = color;
         ctx.lineWidth = 2;
-        ctx.globalAlpha = 0.75;
+        ctx.globalAlpha = 0.65;
         ctx.stroke();
         ctx.globalAlpha = 1.0;
       }
@@ -106,15 +106,15 @@ export default function MainViewer({ currentTimeSec, setCurrentTimeSec, currentF
       ctx.arc(cx, cy, 4, 0, 2 * Math.PI);
       ctx.fill();
 
-      // Label background for Light theme
+      // Sleek dark label tag
       const label = `#${det.id} ${det.class} (${det.speed_kmh}km/h)`;
-      ctx.font = 'bold 10px Inter, sans-serif';
+      ctx.font = 'bold 10px "Plus Jakarta Sans", sans-serif';
       const textMetrics = ctx.measureText(label);
 
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
+      ctx.fillStyle = 'rgba(7, 9, 14, 0.9)';
       ctx.fillRect(cx - boxW / 2, cy - boxH / 2 - 16, textMetrics.width + 8, 14);
 
-      ctx.fillStyle = '#1c1c1e';
+      ctx.fillStyle = '#ffffff';
       ctx.fillText(label, cx - boxW / 2 + 4, cy - boxH / 2 - 5);
     });
 
@@ -123,16 +123,16 @@ export default function MainViewer({ currentTimeSec, setCurrentTimeSec, currentF
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
       {/* Left Pane: Synchronized Video Feed */}
-      <div className="glass-card rounded-2xl p-4 flex flex-col justify-between">
+      <div className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col justify-between">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <Eye className="w-4 h-4 text-ios-accent" />
-            <h2 className="text-sm font-bold text-slate-900">Camera Stream 01</h2>
+            <Eye className="w-4 h-4 text-blue-400" />
+            <h2 className="text-sm font-bold text-white">Camera Stream 01</h2>
           </div>
-          <span className="text-xs text-slate-500 font-mono font-medium">1080p @ 30FPS</span>
+          <span className="text-xs text-slate-400 font-mono font-medium">1080p @ 30FPS</span>
         </div>
 
-        <div className="relative rounded-xl overflow-hidden bg-slate-900 aspect-video flex items-center justify-center group border border-slate-200 shadow-inner">
+        <div className="relative rounded-xl overflow-hidden bg-black aspect-video flex items-center justify-center group border border-white/10 shadow-2xl">
           <video
             ref={videoRef}
             onTimeUpdate={handleTimeUpdate}
@@ -151,29 +151,29 @@ export default function MainViewer({ currentTimeSec, setCurrentTimeSec, currentF
           {!isPlaying && (
             <button
               onClick={togglePlay}
-              className="absolute p-4 rounded-full bg-white/80 backdrop-blur-md text-slate-900 border border-white/60 shadow-lg opacity-90 group-hover:opacity-100 transition-all hover:scale-105 pointer-events-auto"
+              className="absolute p-4 rounded-full bg-black/60 backdrop-blur-md text-white border border-white/20 shadow-glow-blue opacity-90 group-hover:opacity-100 transition-all hover:scale-105 pointer-events-auto"
             >
-              <Play className="w-6 h-6 fill-slate-900 ml-0.5" />
+              <Play className="w-6 h-6 fill-white ml-0.5" />
             </button>
           )}
         </div>
 
-        {/* Video Scrubber & Controls */}
-        <div className="mt-3 flex items-center gap-3">
+        {/* Video Scrubber & Playback Controls */}
+        <div className="mt-3.5 flex items-center gap-3">
           <button
             onClick={togglePlay}
-            className="p-2 rounded-xl bg-slate-100 text-slate-800 hover:bg-slate-200 border border-slate-200 transition-colors shadow-sm"
+            className="p-2.5 rounded-xl bg-slate-900/90 text-slate-200 hover:bg-slate-800 border border-white/10 transition-colors shadow-sm"
             title={isPlaying ? "Pause" : "Play"}
           >
-            {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+            {isPlaying ? <Pause className="w-4 h-4 text-blue-400" /> : <Play className="w-4 h-4 text-blue-400" />}
           </button>
 
           <button
             onClick={toggleMute}
-            className="p-2 rounded-xl bg-slate-100 text-slate-800 hover:bg-slate-200 border border-slate-200 transition-colors shadow-sm"
+            className="p-2.5 rounded-xl bg-slate-900/90 text-slate-200 hover:bg-slate-800 border border-white/10 transition-colors shadow-sm"
             title={isMuted ? "Unmute" : "Mute"}
           >
-            {isMuted ? <VolumeX className="w-4 h-4 text-slate-400" /> : <Volume2 className="w-4 h-4 text-ios-accent" />}
+            {isMuted ? <VolumeX className="w-4 h-4 text-slate-400" /> : <Volume2 className="w-4 h-4 text-blue-400" />}
           </button>
 
           <input
@@ -187,27 +187,27 @@ export default function MainViewer({ currentTimeSec, setCurrentTimeSec, currentF
               setCurrentTimeSec(val);
               if (videoRef.current) videoRef.current.currentTime = val;
             }}
-            className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-ios-accent"
+            className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-blue-500"
           />
         </div>
       </div>
 
-      {/* Right Pane: Interactive Map Viewer & Trajectory Overlay */}
-      <div className="glass-card rounded-2xl p-4 flex flex-col justify-between">
+      {/* Right Pane: Interactive Map Viewer & Trajectory Canvas Overlay */}
+      <div className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col justify-between">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <Layers className="w-4 h-4 text-ios-indigo" />
-            <h2 className="text-sm font-bold text-slate-900">GIS Trajectory Overlay</h2>
+            <Layers className="w-4 h-4 text-indigo-400" />
+            <h2 className="text-sm font-bold text-white">GIS Trajectory Overlay</h2>
           </div>
 
-          {/* Toggle Map Mode Buttons */}
-          <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 gap-1 text-xs shadow-inner">
+          {/* Segmented Control for Map Mode */}
+          <div className="flex items-center bg-slate-900/90 p-1 rounded-xl border border-white/10 gap-1 text-xs">
             <button
               onClick={() => setMapMode('base')}
               className={`flex items-center gap-1.5 px-3 py-1 rounded-lg transition-all ${
                 mapMode === 'base'
-                  ? 'bg-ios-accent text-white font-semibold shadow-sm'
-                  : 'text-slate-600 hover:text-slate-900 font-medium'
+                  ? 'bg-blue-600 text-white font-semibold shadow-glow-blue'
+                  : 'text-slate-400 hover:text-white font-medium'
               }`}
             >
               <MapPin className="w-3.5 h-3.5" />
@@ -217,8 +217,8 @@ export default function MainViewer({ currentTimeSec, setCurrentTimeSec, currentF
               onClick={() => setMapMode('heatmap')}
               className={`flex items-center gap-1.5 px-3 py-1 rounded-lg transition-all ${
                 mapMode === 'heatmap'
-                  ? 'bg-ios-rose text-white font-semibold shadow-sm'
-                  : 'text-slate-600 hover:text-slate-900 font-medium'
+                  ? 'bg-rose-600 text-white font-semibold shadow-glow-rose'
+                  : 'text-slate-400 hover:text-white font-medium'
               }`}
             >
               <Flame className="w-3.5 h-3.5" />
@@ -227,11 +227,11 @@ export default function MainViewer({ currentTimeSec, setCurrentTimeSec, currentF
           </div>
         </div>
 
-        <div className="relative rounded-xl overflow-hidden aspect-video bg-slate-100 border border-slate-200 shadow-inner">
+        <div className="relative rounded-xl overflow-hidden aspect-video bg-slate-950 border border-white/10 shadow-2xl">
           <img
             src={mapMode === 'base' ? baseMapUrl : heatmapUrl}
             alt="Intersection GIS Map"
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover opacity-85"
           />
 
           <canvas
@@ -243,23 +243,23 @@ export default function MainViewer({ currentTimeSec, setCurrentTimeSec, currentF
         </div>
 
         {/* Legend */}
-        <div className="mt-3 flex items-center justify-between text-xs text-slate-600 font-medium px-1">
-          <span className="font-mono">Active Vehicles: {currentFrameData?.detections?.length || 0}</span>
+        <div className="mt-3.5 flex items-center justify-between text-xs text-slate-400 font-medium px-1">
+          <span className="font-mono">Active Vehicles: <span className="text-white font-bold">{currentFrameData?.detections?.length || 0}</span></span>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1">
-              <span className="w-2.5 h-2.5 rounded-full bg-ios-accent"></span>
+              <span className="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-[0_0_8px_#007AFF]"></span>
               <span>Two-Wheeler</span>
             </div>
             <div className="flex items-center gap-1">
-              <span className="w-2.5 h-2.5 rounded-full bg-ios-amber"></span>
+              <span className="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_8px_#FF9F0A]"></span>
               <span>Three-Wheeler</span>
             </div>
             <div className="flex items-center gap-1">
-              <span className="w-2.5 h-2.5 rounded-full bg-ios-emerald"></span>
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#30D158]"></span>
               <span>Car</span>
             </div>
             <div className="flex items-center gap-1">
-              <span className="w-2.5 h-2.5 rounded-full bg-ios-rose"></span>
+              <span className="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-[0_0_8px_#FF453A]"></span>
               <span>LCV</span>
             </div>
           </div>

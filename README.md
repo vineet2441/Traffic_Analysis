@@ -82,7 +82,7 @@ python backend/seed_data.py
 Start the Uvicorn development server:
 
 ```bash
-uvicorn backend.main:app --reload --port 8000
+uvicorn backend.main:app --reload --reload-dir backend --port 8000
 ```
 
 The API will be accessible at `http://localhost:8000`. You can inspect interactive OpenAPI docs at `http://localhost:8000/docs`.

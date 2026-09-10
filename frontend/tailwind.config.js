@@ -9,9 +9,9 @@ export default {
     extend: {
       colors: {
         ios: {
-          bg: '#0a0d14',
-          card: '#121824',
-          border: 'rgba(255, 255, 255, 0.08)',
+          bg: '#f2f2f7',
+          card: '#ffffff',
+          border: 'rgba(0, 0, 0, 0.08)',
           accent: '#007AFF',
           emerald: '#34C759',
           amber: '#FF9500',

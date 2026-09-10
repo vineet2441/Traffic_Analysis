@@ -18,7 +18,6 @@ export default function AnalyticsPanel({ kpis, allTrajectories }) {
 
   const speedTrendData = useMemo(() => {
     if (!allTrajectories || allTrajectories.length === 0) return [];
-    // Downsample trajectories into 30 time steps for line chart rendering
     const step = Math.max(1, Math.floor(allTrajectories.length / 30));
     const data = [];
 
@@ -47,9 +46,9 @@ export default function AnalyticsPanel({ kpis, allTrajectories }) {
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <PieIcon className="w-4 h-4 text-ios-accent" />
-            <h3 className="text-sm font-semibold text-white">Vehicle Class Composition</h3>
+            <h3 className="text-sm font-bold text-slate-900">Vehicle Class Composition</h3>
           </div>
-          <span className="text-xs text-slate-400">Modal Split</span>
+          <span className="text-xs font-semibold text-slate-500">Modal Split</span>
         </div>
 
         <div className="h-64 w-full flex items-center justify-center">
@@ -70,25 +69,26 @@ export default function AnalyticsPanel({ kpis, allTrajectories }) {
               </Pie>
               <Tooltip
                 contentStyle={{
-                  backgroundColor: '#121824',
-                  borderColor: 'rgba(255, 255, 255, 0.1)',
+                  backgroundColor: '#ffffff',
+                  borderColor: 'rgba(0, 0, 0, 0.08)',
                   borderRadius: '12px',
-                  color: '#fff',
-                  fontSize: '12px'
+                  color: '#1c1c1e',
+                  fontSize: '12px',
+                  boxShadow: '0 4px 16px -2px rgba(0, 0, 0, 0.08)'
                 }}
               />
             </PieChart>
           </ResponsiveContainer>
         </div>
 
-        <div className="grid grid-cols-2 gap-2 mt-2 pt-3 border-t border-white/5 text-xs text-slate-300">
+        <div className="grid grid-cols-2 gap-2 mt-2 pt-3 border-t border-slate-100 text-xs text-slate-700 font-medium">
           {pieData.map((item, idx) => (
-            <div key={idx} className="flex items-center justify-between px-2 py-1 rounded-lg bg-slate-900/40">
+            <div key={idx} className="flex items-center justify-between px-2 py-1 rounded-lg bg-slate-100/80 border border-slate-200/60">
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: COLORS[idx] }}></span>
                 <span>{item.name}</span>
               </div>
-              <span className="font-semibold text-white">{item.value}</span>
+              <span className="font-bold text-slate-900">{item.value}</span>
             </div>
           ))}
         </div>
@@ -99,24 +99,25 @@ export default function AnalyticsPanel({ kpis, allTrajectories }) {
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <TrendingUp className="w-4 h-4 text-ios-emerald" />
-            <h3 className="text-sm font-semibold text-white">Traffic Velocity & Temporal Dynamics</h3>
+            <h3 className="text-sm font-bold text-slate-900">Traffic Velocity & Temporal Dynamics</h3>
           </div>
-          <span className="text-xs text-slate-400">Average Velocity (km/h) vs Time</span>
+          <span className="text-xs font-semibold text-slate-500">Average Velocity (km/h) vs Time</span>
         </div>
 
         <div className="h-64 w-full mt-2">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={speedTrendData} margin={{ top: 10, right: 20, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-              <XAxis dataKey="time" stroke="#64748b" fontSize={11} />
-              <YAxis stroke="#64748b" fontSize={11} domain={[0, 60]} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" />
+              <XAxis dataKey="time" stroke="#8e8e93" fontSize={11} fontWeight={500} />
+              <YAxis stroke="#8e8e93" fontSize={11} fontWeight={500} domain={[0, 60]} />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: '#121824',
-                  borderColor: 'rgba(255, 255, 255, 0.1)',
+                  backgroundColor: '#ffffff',
+                  borderColor: 'rgba(0, 0, 0, 0.08)',
                   borderRadius: '12px',
-                  color: '#fff',
-                  fontSize: '12px'
+                  color: '#1c1c1e',
+                  fontSize: '12px',
+                  boxShadow: '0 4px 16px -2px rgba(0, 0, 0, 0.08)'
                 }}
               />
               <Line
@@ -141,9 +142,9 @@ export default function AnalyticsPanel({ kpis, allTrajectories }) {
           </ResponsiveContainer>
         </div>
 
-        <div className="mt-3 pt-3 border-t border-white/5 flex items-center justify-between text-xs text-slate-400">
-          <span>Intersection Congestion Index: <span className="text-emerald-400 font-semibold">Low (Free Flow)</span></span>
-          <span className="font-mono text-slate-500">Data Window: 30.0s @ 30 FPS</span>
+        <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-medium">
+          <span>Intersection Congestion Index: <span className="text-emerald-600 font-bold">Low (Free Flow)</span></span>
+          <span className="font-mono text-slate-400">Data Window: 30.0s @ 30 FPS</span>
         </div>
       </div>
     </div>

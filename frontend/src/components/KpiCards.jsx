@@ -10,7 +10,7 @@ export default function KpiCards({ kpis }) {
       icon: Car,
       color: "text-ios-accent",
       bgColor: "bg-ios-accent/10",
-      borderColor: "border-ios-accent/20",
+      borderColor: "border-ios-accent/25",
       trend: "+12.4% vs avg"
     },
     {
@@ -20,7 +20,7 @@ export default function KpiCards({ kpis }) {
       icon: AlertTriangle,
       color: "text-ios-rose",
       bgColor: "bg-ios-rose/10",
-      borderColor: "border-ios-rose/20",
+      borderColor: "border-ios-rose/25",
       trend: "Risk Index: " + (kpis?.risk_index ?? "0.34")
     },
     {
@@ -30,7 +30,7 @@ export default function KpiCards({ kpis }) {
       icon: Gauge,
       color: "text-ios-amber",
       bgColor: "bg-ios-amber/10",
-      borderColor: "border-ios-amber/20",
+      borderColor: "border-ios-amber/25",
       trend: "Normal flow velocity"
     },
     {
@@ -40,7 +40,7 @@ export default function KpiCards({ kpis }) {
       icon: Bike,
       color: "text-ios-indigo",
       bgColor: "bg-ios-indigo/10",
-      borderColor: "border-ios-indigo/20",
+      borderColor: "border-ios-indigo/25",
       trend: "Indian Urban Profile"
     }
   ];
@@ -52,18 +52,18 @@ export default function KpiCards({ kpis }) {
         return (
           <div key={idx} className="glass-card glass-card-hover rounded-2xl p-5 relative overflow-hidden">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">{card.title}</span>
+              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{card.title}</span>
               <div className={`p-2.5 rounded-xl ${card.bgColor} ${card.color} border ${card.borderColor}`}>
                 <IconComponent className="w-5 h-5" />
               </div>
             </div>
 
             <div className="mt-4 flex items-baseline gap-2">
-              <span className="text-3xl font-bold text-white tracking-tight">{card.value}</span>
-              <span className="text-xs text-slate-400">{card.unit}</span>
+              <span className="text-3xl font-bold text-slate-900 tracking-tight">{card.value}</span>
+              <span className="text-xs font-medium text-slate-500">{card.unit}</span>
             </div>
 
-            <div className="mt-3 pt-3 border-t border-white/5 flex items-center justify-between text-xs text-slate-400">
+            <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-medium">
               <span>{card.trend}</span>
             </div>
           </div>

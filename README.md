@@ -125,6 +125,4 @@ Open your browser and navigate to `http://localhost:5173` to view the live dashb
 
 ---
 
-## 🎓 Student Project Notes
 
-Developed for the Senior Traffic Computer Vision & Safety Engineering coursework. The trajectory seed generator models realistic turning radius trajectories (quadratic Bezier curves) and congestion-induced speed variance typical of urban Indian signalized intersections.

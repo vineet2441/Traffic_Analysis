@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Play, Pause, Layers, MapPin, Flame, Eye } from 'lucide-react';
+import { Play, Pause, Layers, MapPin, Flame, Eye, Volume2, VolumeX } from 'lucide-react';
 
 const CLASS_COLORS = {
   "Two-Wheeler": "#007AFF",
@@ -10,6 +10,7 @@ const CLASS_COLORS = {
 
 export default function MainViewer({ currentTimeSec, setCurrentTimeSec, currentFrameData, allTrajectories }) {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
   const [mapMode, setMapMode] = useState('base'); // 'base' or 'heatmap'
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -18,15 +19,22 @@ export default function MainViewer({ currentTimeSec, setCurrentTimeSec, currentF
   const baseMapUrl = "/media/Map.jpeg";
   const heatmapUrl = "/media/HeatMap.jpeg";
 
-  // Synchronize playback state
   const togglePlay = () => {
     if (!videoRef.current) return;
-    if (isPlaying) {
-      videoRef.current.pause();
+    if (videoRef.current.paused) {
+      videoRef.current.play().catch(err => {
+        console.warn("Video playback was interrupted or blocked:", err);
+      });
     } else {
-      videoRef.current.play();
+      videoRef.current.pause();
     }
-    setIsPlaying(!isPlaying);
+  };
+
+  const toggleMute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !isMuted;
+      setIsMuted(!isMuted);
+    }
   };
 
   const handleTimeUpdate = () => {
@@ -49,7 +57,6 @@ export default function MainViewer({ currentTimeSec, setCurrentTimeSec, currentF
 
     // Draw active detections for current frame
     currentFrameData.detections.forEach((det) => {
-      // Scale positions from 1920x1080 resolution to canvas size
       const scaleX = width / 1920;
       const scaleY = height / 1080;
 
@@ -57,7 +64,7 @@ export default function MainViewer({ currentTimeSec, setCurrentTimeSec, currentF
       const cy = det.y * scaleY;
       const color = CLASS_COLORS[det.class] || '#007AFF';
 
-      // Draw trajectory motion trail for past 10 frames
+      // Draw trajectory motion trail for past 15 frames
       if (allTrajectories && allTrajectories.length > 0) {
         ctx.beginPath();
         const startFrame = Math.max(0, currentFrameData.frame_index - 15);
@@ -81,12 +88,12 @@ export default function MainViewer({ currentTimeSec, setCurrentTimeSec, currentF
         }
         ctx.strokeStyle = color;
         ctx.lineWidth = 2;
-        ctx.globalAlpha = 0.5;
+        ctx.globalAlpha = 0.6;
         ctx.stroke();
         ctx.globalAlpha = 1.0;
       }
 
-      // Draw bounding box / position marker
+      // Draw bounding box
       const boxW = (det.width || 50) * scaleX;
       const boxH = (det.height || 80) * scaleY;
 
@@ -94,7 +101,7 @@ export default function MainViewer({ currentTimeSec, setCurrentTimeSec, currentF
       ctx.lineWidth = 2;
       ctx.strokeRect(cx - boxW / 2, cy - boxH / 2, boxW, boxH);
 
-      // Draw center dot
+      // Draw center marker
       ctx.fillStyle = color;
       ctx.beginPath();
       ctx.arc(cx, cy, 4, 0, 2 * Math.PI);
@@ -131,22 +138,43 @@ export default function MainViewer({ currentTimeSec, setCurrentTimeSec, currentF
             ref={videoRef}
             src={videoUrl}
             onTimeUpdate={handleTimeUpdate}
+            onPlay={() => setIsPlaying(true)}
+            onPause={() => setIsPlaying(false)}
             onEnded={() => setIsPlaying(false)}
-            className="w-full h-full object-cover"
+            muted={isMuted}
+            playsInline
+            preload="auto"
+            controls
+            className="w-full h-full object-contain"
           />
-          <button
-            onClick={togglePlay}
-            className="absolute p-4 rounded-full bg-black/60 backdrop-blur-md text-white border border-white/20 opacity-90 group-hover:opacity-100 transition-opacity hover:scale-105"
-          >
-            {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6 fill-white ml-0.5" />}
-          </button>
+          {!isPlaying && (
+            <button
+              onClick={togglePlay}
+              className="absolute p-4 rounded-full bg-black/60 backdrop-blur-md text-white border border-white/20 opacity-90 group-hover:opacity-100 transition-opacity hover:scale-105 pointer-events-auto"
+            >
+              <Play className="w-6 h-6 fill-white ml-0.5" />
+            </button>
+          )}
         </div>
 
-        {/* Video Scrubber Controls */}
+        {/* Video Scrubber & Playback Controls */}
         <div className="mt-3 flex items-center gap-3">
-          <button onClick={togglePlay} className="p-2 rounded-xl bg-slate-800 text-slate-200 hover:bg-slate-700">
+          <button
+            onClick={togglePlay}
+            className="p-2 rounded-xl bg-slate-800 text-slate-200 hover:bg-slate-700 transition-colors"
+            title={isPlaying ? "Pause" : "Play"}
+          >
             {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
           </button>
+
+          <button
+            onClick={toggleMute}
+            className="p-2 rounded-xl bg-slate-800 text-slate-200 hover:bg-slate-700 transition-colors"
+            title={isMuted ? "Unmute" : "Mute"}
+          >
+            {isMuted ? <VolumeX className="w-4 h-4 text-slate-400" /> : <Volume2 className="w-4 h-4 text-ios-accent" />}
+          </button>
+
           <input
             type="range"
             min="0"

@@ -1,4 +1,5 @@
 import os
+import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -31,3 +32,6 @@ app.include_router(router)
 @app.get("/")
 def read_root():
     return {"message": "Traffic Analytics API Operational. Access /docs for API documentation."}
+
+if __name__ == "__main__":
+    uvicorn.run("backend.main:app", host="0.0.0.0", port=8000, reload=True, reload_dirs=[os.path.join(ROOT_DIR, "backend")])

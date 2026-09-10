@@ -11,22 +11,25 @@ const CLASS_COLORS = {
 export default function MainViewer({ currentTimeSec, setCurrentTimeSec, currentFrameData, allTrajectories }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
-  const [mapMode, setMapMode] = useState('base'); // 'base' or 'heatmap'
+  const [mapMode, setMapMode] = useState('base');
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
 
-  const videoUrl = "/api/video/stream";
-  const baseMapUrl = "/media/Map.jpeg";
-  const heatmapUrl = "/media/HeatMap.jpeg";
+  const videoUrl = "/annotated_junction67.mp4";
+  const baseMapUrl = "/Map.jpeg";
+  const heatmapUrl = "/HeatMap.jpeg";
 
   const togglePlay = () => {
     if (!videoRef.current) return;
     if (videoRef.current.paused) {
-      videoRef.current.play().catch(err => {
-        console.warn("Video playback was interrupted or blocked:", err);
+      videoRef.current.play().then(() => {
+        setIsPlaying(true);
+      }).catch(err => {
+        console.warn("Playback error:", err);
       });
     } else {
       videoRef.current.pause();
+      setIsPlaying(false);
     }
   };
 
@@ -55,7 +58,6 @@ export default function MainViewer({ currentTimeSec, setCurrentTimeSec, currentF
 
     if (!currentFrameData || !currentFrameData.detections) return;
 
-    // Draw active detections for current frame
     currentFrameData.detections.forEach((det) => {
       const scaleX = width / 1920;
       const scaleY = height / 1080;
@@ -64,7 +66,6 @@ export default function MainViewer({ currentTimeSec, setCurrentTimeSec, currentF
       const cy = det.y * scaleY;
       const color = CLASS_COLORS[det.class] || '#007AFF';
 
-      // Draw trajectory motion trail for past 15 frames
       if (allTrajectories && allTrajectories.length > 0) {
         ctx.beginPath();
         const startFrame = Math.max(0, currentFrameData.frame_index - 15);
@@ -93,7 +94,6 @@ export default function MainViewer({ currentTimeSec, setCurrentTimeSec, currentF
         ctx.globalAlpha = 1.0;
       }
 
-      // Draw bounding box
       const boxW = (det.width || 50) * scaleX;
       const boxH = (det.height || 80) * scaleY;
 
@@ -101,13 +101,11 @@ export default function MainViewer({ currentTimeSec, setCurrentTimeSec, currentF
       ctx.lineWidth = 2;
       ctx.strokeRect(cx - boxW / 2, cy - boxH / 2, boxW, boxH);
 
-      // Draw center marker
       ctx.fillStyle = color;
       ctx.beginPath();
       ctx.arc(cx, cy, 4, 0, 2 * Math.PI);
       ctx.fill();
 
-      // Draw label tag
       const label = `#${det.id} ${det.class} (${det.speed_kmh}km/h)`;
       ctx.font = '10px Inter, sans-serif';
       const textMetrics = ctx.measureText(label);
@@ -136,7 +134,6 @@ export default function MainViewer({ currentTimeSec, setCurrentTimeSec, currentF
         <div className="relative rounded-xl overflow-hidden bg-black aspect-video flex items-center justify-center group border border-white/10">
           <video
             ref={videoRef}
-            src={videoUrl}
             onTimeUpdate={handleTimeUpdate}
             onPlay={() => setIsPlaying(true)}
             onPause={() => setIsPlaying(false)}
@@ -146,7 +143,10 @@ export default function MainViewer({ currentTimeSec, setCurrentTimeSec, currentF
             preload="auto"
             controls
             className="w-full h-full object-contain"
-          />
+          >
+            <source src={videoUrl} type="video/mp4" />
+            <source src="/api/video/stream" type="video/mp4" />
+          </video>
           {!isPlaying && (
             <button
               onClick={togglePlay}
